@@ -68,6 +68,12 @@ export const FLAGS = [
     values: ['string', 'number', 'number-or-string'],
   },
   {
+    default: 'string',
+    description: 'Specify which parser to use for PostgreSQL bigint (int8) values.',
+    longName: 'bigint-parser',
+    values: ['string', 'number', 'number-or-string'],
+  },
+  {
     default: DEFAULT_OUT_FILE,
     description: 'Set the file build path.',
     longName: 'out-file',

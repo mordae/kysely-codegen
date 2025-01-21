@@ -2,6 +2,7 @@ import { deepStrictEqual } from 'assert';
 import { describe, it } from 'vitest';
 import { DateParser } from '../../introspector/dialects/postgres/date-parser';
 import { NumericParser } from '../../introspector/dialects/postgres/numeric-parser';
+import { BigintParser } from '../../introspector/dialects/postgres/bigint-parser';
 import { EnumCollection } from '../../introspector/enum-collection';
 import { ColumnMetadata } from '../../introspector/metadata/column-metadata';
 import { DatabaseMetadata } from '../../introspector/metadata/database-metadata';
@@ -37,19 +38,21 @@ describe(transform.name, () => {
     camelCase,
     dateParser,
     numericParser,
+    bigintParser,
     runtimeEnums,
     tables,
   }: {
     camelCase?: boolean;
     dateParser?: DateParser;
     numericParser?: NumericParser;
+    bigintParser?: BigintParser;
     runtimeEnums?: boolean;
     runtimeEnumsStyle?: RuntimeEnumsStyle;
     tables: TableMetadata[];
   }) => {
     return transform({
       camelCase,
-      dialect: new PostgresDialect({ dateParser, numericParser }),
+      dialect: new PostgresDialect({ dateParser, numericParser, bigintParser }),
       metadata: new DatabaseMetadata({ enums, tables }),
       overrides: {
         columns: {
@@ -308,6 +311,25 @@ describe(transform.name, () => {
             new ColumnMetadata({
               dataType: 'numeric',
               name: 'numeric',
+            }),
+          ],
+          name: 'table',
+        }),
+      ],
+    });
+
+    deepStrictEqual((nodes[1] as any).argument.body.args[0].name, 'number');
+  });
+
+  it('should be able to transform using an alternative Postgres bigint parser', () => {
+    const nodes = transformWithDefaults({
+      bigintParser: BigintParser.NUMBER,
+      tables: [
+        new TableMetadata({
+          columns: [
+            new ColumnMetadata({
+              dataType: 'int8',
+              name: 'int8',
             }),
           ],
           name: 'table',

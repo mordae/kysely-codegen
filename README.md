@@ -223,6 +223,10 @@ Skip generating types for PostgreSQL domains. (default: `false`)
 
 Specify which parser to use for PostgreSQL numeric values. (values: [`string`, `number`, `number-or-string`], default: `string`)
 
+#### --bigint-parser <!-- omit from toc -->
+
+Specify which parser to use for PostgreSQL bigint (int8) values. (values: [`string`, `number`, `number-or-string`], default: `string`)
+
 #### --overrides <!-- omit from toc -->
 
 Specify type overrides for specific table columns in JSON format.

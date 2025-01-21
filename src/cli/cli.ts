@@ -16,6 +16,10 @@ import {
   NumericParser,
 } from '../introspector/dialects/postgres/numeric-parser';
 import {
+  DEFAULT_BIGINT_PARSER,
+  BigintParser,
+} from '../introspector/dialects/postgres/bigint-parser';
+import {
   DEFAULT_LOG_LEVEL,
   DEFAULT_OUT_FILE,
   DEFAULT_URL,
@@ -33,6 +37,7 @@ export type CliOptions = {
   includePattern?: string;
   logLevel?: LogLevel;
   numericParser?: NumericParser;
+  bigintParser?: BigintParser;
   outFile?: string;
   overrides?: Overrides;
   partitions?: boolean;
@@ -88,6 +93,7 @@ export class Cli {
       dateParser: options.dateParser ?? DEFAULT_DATE_PARSER,
       domains: !!options.domains,
       numericParser: options.numericParser ?? DEFAULT_NUMERIC_PARSER,
+      bigintParser: options.bigintParser ?? DEFAULT_BIGINT_PARSER,
       partitions: !!options.partitions,
     });
     const dialect = dialectManager.getDialect(
@@ -166,6 +172,19 @@ export class Cli {
     }
   }
 
+  #parseBigintParser(input: any) {
+    switch (input) {
+      case 'number':
+        return BigintParser.NUMBER;
+      case 'number-or-string':
+        return BigintParser.NUMBER_OR_STRING;
+      case 'string':
+        return BigintParser.STRING;
+      default:
+        return DEFAULT_BIGINT_PARSER;
+    }
+  }
+
   #parseRuntimeEnumsStyle(input: any) {
     switch (input) {
       case 'pascal-case':
@@ -209,6 +228,7 @@ export class Cli {
       !!argv.h || !!argv.help || _.includes('-h') || _.includes('--help');
     const includePattern = this.#parseString(argv['include-pattern']);
     const numericParser = this.#parseNumericParser(argv['numeric-parser']);
+    const bigintParser = this.#parseBigintParser(argv['bigint-parser'])
     const outFile =
       this.#parseString(argv['out-file']) ??
       (argv.print ? undefined : DEFAULT_OUT_FILE);
@@ -273,6 +293,7 @@ export class Cli {
       includePattern,
       logLevel,
       numericParser,
+      bigintParser,
       outFile,
       overrides,
       partitions,

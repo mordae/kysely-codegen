@@ -4,6 +4,7 @@ import { join } from 'path';
 import { describe, test } from 'vitest';
 import { DateParser } from '../../introspector/dialects/postgres/date-parser';
 import { NumericParser } from '../../introspector/dialects/postgres/numeric-parser';
+import { BigintParser } from '../../introspector/dialects/postgres/bigint-parser';
 import {
   addExtraColumn,
   migrate,
@@ -49,6 +50,7 @@ const TESTS: Test[] = [
     dialect: new PostgresDialect({
       dateParser: DateParser.STRING,
       numericParser: NumericParser.NUMBER_OR_STRING,
+      bigintParser: BigintParser.NUMBER_OR_STRING,
     }),
     generateOptions: {
       runtimeEnums: true,

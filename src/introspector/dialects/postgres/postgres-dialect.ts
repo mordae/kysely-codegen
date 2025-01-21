@@ -3,6 +3,7 @@ import type { CreateKyselyDialectOptions } from '../../dialect';
 import { IntrospectorDialect } from '../../dialect';
 import { DateParser, DEFAULT_DATE_PARSER } from './date-parser';
 import { DEFAULT_NUMERIC_PARSER, NumericParser } from './numeric-parser';
+import { DEFAULT_BIGINT_PARSER, BigintParser } from './bigint-parser';
 import { PostgresIntrospector } from './postgres-introspector';
 
 type PostgresDialectOptions = {
@@ -10,6 +11,7 @@ type PostgresDialectOptions = {
   defaultSchemas?: string[];
   domains?: boolean;
   numericParser?: NumericParser;
+  bigintParser?: BigintParser;
   partitions?: boolean;
 };
 
@@ -30,6 +32,7 @@ export class PostgresIntrospectorDialect extends IntrospectorDialect {
       defaultSchemas: options?.defaultSchemas,
       domains: options?.domains ?? true,
       numericParser: options?.numericParser ?? DEFAULT_NUMERIC_PARSER,
+      bigintParser: options?.bigintParser ?? DEFAULT_BIGINT_PARSER,
     };
   }
 
@@ -43,6 +46,18 @@ export class PostgresIntrospectorDialect extends IntrospectorDialect {
     if (this.options.numericParser === NumericParser.NUMBER) {
       pg.types.setTypeParser(1700, Number);
     } else if (this.options.numericParser === NumericParser.NUMBER_OR_STRING) {
+      pg.types.setTypeParser(1700, (value) => {
+        const number = Number(value);
+        return number > Number.MAX_SAFE_INTEGER ||
+          number < Number.MIN_SAFE_INTEGER
+          ? value
+          : number;
+      });
+    }
+
+    if (this.options.bigintParser === BigintParser.NUMBER) {
+      pg.types.setTypeParser(1700, Number);
+    } else if (this.options.bigintParser === BigintParser.NUMBER_OR_STRING) {
       pg.types.setTypeParser(1700, (value) => {
         const number = Number(value);
         return number > Number.MAX_SAFE_INTEGER ||

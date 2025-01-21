@@ -9,6 +9,7 @@ import {
   DEFAULT_DATE_PARSER,
 } from '../introspector/dialects/postgres/date-parser';
 import { DEFAULT_NUMERIC_PARSER } from '../introspector/dialects/postgres/numeric-parser';
+import { DEFAULT_BIGINT_PARSER } from '../introspector/dialects/postgres/bigint-parser';
 import type { CliOptions } from './cli';
 import { Cli } from './cli';
 import { DEFAULT_LOG_LEVEL, DEFAULT_OUT_FILE, DEFAULT_URL } from './constants';
@@ -26,6 +27,7 @@ describe(Cli.name, () => {
     includePattern: undefined,
     logLevel: DEFAULT_LOG_LEVEL,
     numericParser: DEFAULT_NUMERIC_PARSER,
+    bigintParser: DEFAULT_BIGINT_PARSER,
     outFile: DEFAULT_OUT_FILE,
     overrides: undefined,
     partitions: false,

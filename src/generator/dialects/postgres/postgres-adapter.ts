@@ -1,5 +1,6 @@
 import { DateParser } from '../../../introspector/dialects/postgres/date-parser';
 import { NumericParser } from '../../../introspector/dialects/postgres/numeric-parser';
+import { BigintParser } from '../../../introspector/dialects/postgres/bigint-parser';
 import { Adapter } from '../../adapter';
 import { ColumnTypeNode } from '../../ast/column-type-node';
 import { IdentifierNode } from '../../ast/identifier-node';
@@ -18,6 +19,7 @@ import {
 type PostgresAdapterOptions = {
   dateParser?: DateParser;
   numericParser?: NumericParser;
+  bigintParser?: BigintParser;
 };
 
 export class PostgresAdapter extends Adapter {
@@ -159,6 +161,27 @@ export class PostgresAdapter extends Adapter {
       );
     } else if (options?.numericParser === NumericParser.NUMBER_OR_STRING) {
       this.definitions.Numeric = new ColumnTypeNode(
+        new UnionExpressionNode([
+          new IdentifierNode('number'),
+          new IdentifierNode('string'),
+        ]),
+      );
+    }
+
+    if (options?.bigintParser === BigintParser.NUMBER) {
+      this.definitions.Int8 = new ColumnTypeNode(
+        new IdentifierNode('number'),
+        new UnionExpressionNode([
+          new IdentifierNode('number'),
+          new IdentifierNode('string'),
+        ]),
+        new UnionExpressionNode([
+          new IdentifierNode('number'),
+          new IdentifierNode('string'),
+        ]),
+      );
+    } else if (options?.bigintParser === BigintParser.NUMBER_OR_STRING) {
+      this.definitions.Int8 = new ColumnTypeNode(
         new UnionExpressionNode([
           new IdentifierNode('number'),
           new IdentifierNode('string'),

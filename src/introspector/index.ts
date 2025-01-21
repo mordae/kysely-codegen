@@ -9,6 +9,7 @@ export * from './dialects/mysql/mysql-introspector';
 export * from './dialects/mysql/mysql-parser';
 export * from './dialects/postgres/date-parser';
 export * from './dialects/postgres/numeric-parser';
+export * from './dialects/postgres/bigint-parser';
 export * from './dialects/postgres/postgres-db';
 export * from './dialects/postgres/postgres-dialect';
 export * from './dialects/postgres/postgres-introspector';
